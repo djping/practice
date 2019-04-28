@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Native JavaScript for Calculator</title>
+	<style type="text/css">
+		body{
+			display: flex;
+			justify-content: center;
+			font-size: 30px;
+			background-color: #583c29;
+			color: white;
+
+		}
+		input{
+			width: 400px;
+			height: 30px;
+			margin-bottom: 20px;
+			text-align: center;
+			color: red;
+		}
+		table{
+			width: 400px;
+			cursor: pointer;
+		}
+		td{
+			width: 100px;
+			height: 100px;
+			border:1px solid orange;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<input type="text" readonly="readonly">
+		<table>
+			<tr>
+				<td>AC</td>
+				<td>CE</td>
+				<td>%</td>
+				<td>/</td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td>8</td>
+				<td>9</td>
+				<td>*</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>5</td>
+				<td>6</td>
+				<td>-</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>2</td>
+				<td>3</td>
+				<td>+</td>
+			</tr>
+			<tr>
+				<td>.</td>
+				<td>0</td>
+				<td>Ans</td>
+				<td id="end">=</td>
+			</tr>
+		</table>
+	</div>
+	<div style="margin-left:20px;">
+		<p>目前发现但未修改的BUG：
+		<ol>
+			<li>第一个数可以输入0</li>
+			<li>输入是可以连续输入几个运算符</li>
+			<li>计算出的结果不能直接使用</li>
+		</ol>
+		<p>codepen React实现（无bug）
+		https://codepen.io/freeCodeCamp/pen/xXPeBe?editors=0110</p>
+	</div>
+	<script type="text/javascript">
+		console.log(typeof document.getElementsByTagName
+			('td')[5].innerText);
+		var express = [];
+		var container = document.getElementById('container');
+		var input = document.getElementsByTagName('input')[0];
+
+		function getValue(event) {//得到最上面的显示数据，并存入数组
+			var notFirst = ["AC","CE","%","+","-","*",
+			"/",".","Ans","="]; //判断第一点击是否为非数字
+			var noput = event.target.innerText;//不能把AC CE和ANS存入
+			if (noput == "AC") {
+				input.value = '';
+				express = [];
+			}else if (noput == 'CE') {
+				express.pop();
+				input.value = "";
+				input.value = express.join("");
+			}
+			else if (event.target.tagName == 'TD' 
+				&& event.target.innerText !== '=') {
+				if (express.length < 1 && 
+					notFirst.indexOf(noput) == -1) {
+					input.value += event.target.innerText;
+					express.push(event.target.innerText);
+				}
+				else if(express.length >= 1){
+					
+				input.value += event.target.innerText;
+				express.push(event.target.innerText);
+				}
+			}
+			// console.log(express);
+		}
+
+		function getNum() {//处理数组，找到运算符
+			var i = 0;
+			var o = [];
+			express.forEach(function(val,index){
+				if (val == '+' || val == '-' 
+					|| val == '*' || val == '/' || val == '%') {
+					i = index;
+					o.push(val);
+				}
+			});
+			express = express.join("").split(o[0]);
+			express.push(o[0]);
+			return express;
+		}
+
+		function getResult(event){
+			getNum(express);
+			console.log('ss' +express);
+			if (event.target.innerText == '=') {
+				var result = 0;
+				if (express.length == 3) {
+					switch(express[2]) {
+						case "+":
+							result = parseFloat(express[0])
+							+ parseFloat(express[1]);
+							break;
+						case "-":
+							result = parseFloat(express[0])
+							- parseFloat(express[1]);
+							break;
+						case "*":
+							result = parseFloat(express[0])
+							* parseFloat(express[1]);
+							break;
+						case "%":
+							result = parseFloat(express[0])
+							% parseFloat(express[1]);
+							break;
+						// case "/":
+						// 	result = parseFloat(express[0])
+						// 	/ parseFloat(express[1]);
+						// 	break;
+					}
+				}
+			}
+			// return result;	
+			input.value = result;
+		}
+		addEventListener('click',getValue);
+		document.getElementById('end').onclick = getResult;
+	</script>
+</body>
+</html>
