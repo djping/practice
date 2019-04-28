@@ -1,5 +1,5 @@
 # 练习原生js
- + [轮播图](轮播图)
+ - [轮播图](#轮播图)
 ## 轮播图
 ![图片](https://github.com/djping/practice/blob/master/imgs/slider.gif)
 ```
