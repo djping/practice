@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>perpetual calendar</title>
+	<style type="text/css">
+		body{
+			margin: 0;
+			padding: 0;
+		}
+		#container{
+			width: 500px;
+			height: 500px;
+			margin: 0 auto;
+		}
+		#container table{
+			/*border-collapse: collapse;*/
+			width: 300px;
+			height: 200px;
+		}
+		#container td{
+			width: 40px;
+			height: 40px;
+			background-color: orange;
+			text-align: center;
+			cursor: pointer;
+		}
+		
+		select{
+			width: 150px;
+			margin-right: 20px;
+		}
+
+	</style>
+</head>
+<body>
+	<div id="container">
+		
+	</div>
+	<script type="text/javascript">
+		var log = console.log.bind(console);
+		function createSelect() {
+			var container = document.getElementById('container');
+			var select1 = document.createElement('select');
+			container.appendChild(select1);
+			for(var j = 1997;j < 2111;j++) {
+				var option = document.createElement('option');
+				option.textContent = j;
+				select1.appendChild(option);
+				if (j == new Date().getFullYear()) {
+					option.selected = 'selected';
+				}
+			}
+
+			var select2 = document.createElement('select');
+			container.appendChild(select2);
+			for(var i = 0;i < 12;i++) {
+				var option = document.createElement('option');
+				option.textContent = i + 1 + '月';
+				select2.appendChild(option);
+				if (i == new Date().getMonth()) {
+					option.selected = 'selected';
+				}
+			}
+		}
+
+		function countDay(year,month){ //index
+			// var date = new Date();
+			// var month = date.getMonth() + 1;
+
+			var days = [
+				[1,3,5,7,8,10,12],
+				[4,6,9,11],
+				[2]
+			];
+			var daysOfMonth = 0;
+			days.forEach(function(arr,index){
+				// log(index)
+				if (index == 1 && arr.indexOf(month) !== -1) {
+					daysOfMonth = 30;
+				}else if(index == 0 && arr.indexOf(month) !== -1){
+					daysOfMonth = 31;
+				}else if (index == 2 && arr.indexOf(month) !== -1) {
+					if ((year % 400 == 0) || 
+						(year % 4 == 0 && year % 100 != 0)) {
+
+						daysOfMonth = 29;
+					}else{
+						daysOfMonth = 28;
+					}
+					// log(2);
+				}
+			})
+			log(daysOfMonth);
+			return daysOfMonth;
+		}
+
+		function createCalender(year,daysOfMonth,whichMonth) {
+
+			var whichDay = new Date(year,whichMonth-1,1).getDay();//第一天为周几
+			log(daysOfMonth)
+
+			if (daysOfMonth == 28 && whichDay == 0) {
+				var rows = 5;
+			}else if (daysOfMonth == 31 && whichDay == 5) {
+				var rows = 7;
+			}else if (daysOfMonth >= 30 && whichDay == 6) {
+				var rows = 7;
+			}else{
+				var rows = 6;
+			}
+
+			log(rows)
+			function createTable() {
+				var container = document.getElementById('container');
+				var table = document.createElement('table');
+				container.appendChild(table);
+				for(var i = 0;i < rows;i++) {
+					var tr = document.createElement('tr');
+					table.appendChild(tr);
+					
+					for(var j = 0;j < 7;j++) {
+						var td = document.createElement('td');
+						// var p = document.createTextNode(j);
+						// td.appendChild(p)
+						tr.appendChild(td);
+						// log(td)
+					}
+				}
+			}
+
+			function padTable() {
+				var trs = document.getElementsByTagName('tr');
+				var tds = document.getElementsByTagName('td');
+				var week = ['日','一','二','三','四','五','六'];
+				week.forEach(function(val,index){
+					tds[index].textContent = val;
+				});
+
+				
+				log(whichDay)
+				// var emptyTds = 7 - whichDay;
+				// log("ss" +emptyTds)
+				for(var i = 0;i < daysOfMonth;i++) {
+					if (whichDay == 0) { //第一天为周日时需特别处理
+						tds[6+1+i].textContent = i + 1;
+					}else{
+						tds[6+whichDay+1+i].textContent = i + 1;
+					}			
+				}
+			}
+
+			createTable()
+
+			padTable()
+		}
+
+		function clearTable() {
+			var container = document.getElementById('container');
+			var table = document.getElementsByTagName('table');
+			if (table.length == 1) {
+				container.removeChild(table[0]);
+			}
+		}
+
+		
+		function init() {
+			createSelect();
+			var date = new Date();
+			var currentYear = date.getFullYear();
+			var currentMonth = date.getMonth() + 1;
+			var daysOfMonth = countDay(currentYear,currentMonth);
+			createCalender(currentYear,daysOfMonth,currentMonth);
+		}
+
+		init();
+
+		var select = document.getElementsByTagName('select');
+		select[0].addEventListener('change',function(){
+			var year = select[0].value;
+			var whichMonth = parseInt(select[1].value);
+			var daysOfMonth = countDay(year,whichMonth);
+			var hasTable = document.getElementsByTagName('table');
+			if (hasTable.length == 1) {
+				clearTable();
+			}
+			createCalender(year,daysOfMonth,whichMonth);
+		});
+		select[1].addEventListener('change',function(){
+			var year = select[0].value;
+			var whichMonth = parseInt(select[1].value);
+			var daysOfMonth = countDay(year,whichMonth);
+			var hasTable = document.getElementsByTagName('table');
+			if (hasTable.length == 1) {
+				clearTable();
+			}
+			createCalender(year,daysOfMonth,whichMonth);
+		});
+	</script>
+</body>
+</html>

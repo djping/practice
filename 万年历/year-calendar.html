@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+	<meta charset="utf-8">
+	<title>calendar of 2018</title>
+	<style type="text/css">
+		body{
+			margin: 0;
+			padding: 0;
+		}
+		#container{
+			width: 500px;
+			height: 500px;
+			margin: 0 auto;
+		}
+		#container table{
+			/*border-collapse: collapse;*/
+			width: 300px;
+			height: 200px;
+		}
+		#container td{
+			width: 40px;
+			height: 40px;
+			background-color: orange;
+			text-align: center;
+			cursor: pointer;
+		}
+		select{
+			width: 50px;
+		}
+	</style>
+</head>
+<body>
+	<div id="container">
+		
+	</div>
+	<script type="text/javascript">
+		var log = console.log.bind(console);
+		function createSelect() {
+			var container = document.getElementById('container');
+			var select = document.createElement('select');
+			container.appendChild(select);
+			for(var i = 0;i < 12;i++) {
+				var option = document.createElement('option');
+				option.textContent = i + 1 + '月';
+				select.appendChild(option);
+				if (i == 10) {
+					option.selected = 'selected';
+				}
+			}
+			// var o = document.getElementsByTagName('option')
+			// log(parseInt(o[0].innerHTML));
+		}
+
+		function countDay(month){ //index
+			// var date = new Date();
+			// var month = date.getMonth() + 1;
+
+			var days = [
+				[1,3,5,7,8,10,12],
+				[4,6,9,11],
+				[2]
+			];
+			log(days)
+			var daysOfMonth = 0;
+			days.forEach(function(arr,index){
+				// log(index)
+				if (index == 1 && arr.indexOf(month) !== -1) {
+					daysOfMonth = 30;
+				}else if(index == 0 && arr.indexOf(month) !== -1){
+					daysOfMonth = 31;
+				}else if (index == 2 && arr.indexOf(month) !== -1) {
+					daysOfMonth = 28;
+				}
+			})
+			log(daysOfMonth);
+			return daysOfMonth;
+		}
+
+		function createCalender(daysOfMonth,whichMonth) {
+
+			var whichDay = new Date(2018,whichMonth-1,1).getDay();//第一天为周几
+			log(daysOfMonth)
+
+			if (daysOfMonth == 28 && whichDay == 0) {
+				var rows = 5;
+			}else if (daysOfMonth == 31 && whichDay == 5) {
+				var rows = 7;
+			}else if (daysOfMonth >= 30 && whichDay == 6) {
+				var rows = 7;
+			}else{
+				var rows = 6;
+			}
+
+			log(rows)
+			function createTable() {
+				var container = document.getElementById('container');
+				var table = document.createElement('table');
+				container.appendChild(table);
+				for(var i = 0;i < rows;i++) {
+					var tr = document.createElement('tr');
+					table.appendChild(tr);
+					
+					for(var j = 0;j < 7;j++) {
+						var td = document.createElement('td');
+						// var p = document.createTextNode(j);
+						// td.appendChild(p)
+						tr.appendChild(td);
+						// log(td)
+					}
+				}
+			}
+
+			function padTable() {
+				var trs = document.getElementsByTagName('tr');
+				var tds = document.getElementsByTagName('td');
+				var week = ['日','一','二','三','四','五','六'];
+				week.forEach(function(val,index){
+					tds[index].textContent = val;
+				});
+
+				
+				log(whichDay)
+				// var emptyTds = 7 - whichDay;
+				// log("ss" +emptyTds)
+				for(var i = 0;i < daysOfMonth;i++) {
+					if (whichDay == 0) { //第一天为周日时需特别处理
+						tds[6+1+i].textContent = i + 1;
+					}else{
+						tds[6+whichDay+1+i].textContent = i + 1;
+					}			
+				}
+			}
+
+			createTable()
+
+			padTable()
+		}
+
+		createSelect()
+		createCalender(30,11)
+
+		function clearTable() {
+			var container = document.getElementById('container');
+			var table = document.getElementsByTagName('table');
+			if (table.length == 1) {
+				container.removeChild(table[0]);
+			}
+		}
+
+		var selectChange = document.getElementsByTagName('select')[0];
+		selectChange.addEventListener('change',function(){
+			clearTable();
+			var whichMonth = parseInt(selectChange.value);
+			var daysOfMonth = countDay(whichMonth);
+			createCalender(daysOfMonth,whichMonth);
+		})
+
+		
+	</script>
+</body>
+</html>
