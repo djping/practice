@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>轮播图</title>
+  <style type="text/css">
+    .slider {
+      position: relative;
+    }
+    .item {
+      display: none;
+    }
+    .active {
+      display: block
+    }
+    .dots {
+
+    }
+    .dot {
+      width: 20px;
+      height: 20px
+      background: blue;
+    }
+    .activeDot {
+      background: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="slider" data-imgs="3">
+    <div class="item active" data-item="0">
+      <img src="slideimages/1.jpg">
+    </div> 
+     <div class="item" data-item="1">
+      <img src="slideimages/2.jpg">
+    </div> 
+     <div class="item" data-item="2">
+      <img src="slideimages/3.jpg">
+    </div> 
+    <button>下一张</button>
+    <button>上一张</button>
+
+    <div class="dots">
+      <button class="dot activeDot" data-id="0"></button>
+      <button class="dot" data-id="1"></button>
+      <button class="dot" data-id="2"></button>
+    </div>
+  </div>
+  <script src="common.js"></script>
+  <script>
+    // 先给图片这是disply: none,通过所以设置为 .active
+    bindEvents('button', 'click', function(event) {
+      if (timer) {
+        clearInterval(timer)
+      }
+      var content = event.target.innerHTML
+      var nextIndex = caluIndex(content)
+      jump(nextIndex)
+      changeDot(nextIndex)
+      // autoPlay()
+    })
+
+    // 计算出下一个 .active 的滑块的索引
+    var caluIndex = function (content) {
+      var slider = document.querySelector('.slider')
+      var numberOfImgs = Number(slider.dataset.imgs)
+      var activeImg = slider.querySelector('.active')
+      var currentIndex = Number(activeImg.dataset.item)
+      console.log(currentIndex)
+      // 0 1 2
+      if (content === "下一张") {
+        var nextIndex = (currentIndex + 1) % numberOfImgs
+      } else {
+        // var nextIndex = numberOfImgs - currentIndex - 1
+        if (currentIndex === 0) {
+          var nextIndex = 2
+        } else {
+          var nextIndex = currentIndex - 1
+        }
+      }
+      activeImg.classList.remove('active')
+      console.log('nextIndex', nextIndex)
+      return nextIndex
+    }
+
+    var jump = function (nextIndex) {
+      var items = document.querySelectorAll('.item')
+      for (var i = 0; i < 3; i++) {
+        var item = items[i]
+        if (Number(item.dataset.item) === nextIndex) {
+          item.classList.add('active')
+          break
+        }
+      }
+    }
+
+    var changeDot = function (index) {
+      var dots = e('.dot')
+      log(dots)
+      for (var i = 0; i < dots.length; i++) {
+        var dot = dots[i]
+        if (dot.classList.contains('activeDot')) {
+           dot.classList.remove('activeDot')
+        }
+        var dotId = Number(dot.dataset.id)
+        if (dotId === index) {
+          dot.classList.add('activeDot')
+          // break;
+        }
+      }
+    }
+
+    var autoPlay = function () {
+        var timer = setInterval(function () {
+          var nextIndex = caluIndex('下一张')
+          jump(nextIndex)
+          changeDot(nextIndex)
+        }, 2000)
+        return timer
+    }
+    var timer = autoPlay()
+  </script>
+  
+</body>
+</html>
