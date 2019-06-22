@@ -21,6 +21,7 @@
  ![图](https://github.com/djping/practice/blob/master/imgs/calculator.gif)
  
 ## node爬虫
+ ![图](https://github.com/djping/practice/blob/master/imgs/douban.gif)
 ```
 //该demo对应douban.js
 //爬取豆瓣电影top250
